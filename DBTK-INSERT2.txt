@@ -1,0 +1,59 @@
+insert foreignkey testcase
+
+create table aref(
+a int,
+b date,
+primary key(a,b)
+);
+
+create table bref(
+a int,
+b char(11),
+primary key(a,b)
+);
+
+create table cref(
+a date,
+b char(9),
+primary key(a,b)
+);
+
+create table hub(
+a int,
+b int,
+c date,
+d date,
+e char(9),
+f char(11),
+primary key(a,b,c,d,e,f),
+foreign key(a,c) references aref(a,b),
+foreign key(b,f) references bref(a,b),
+foreign key(d,e) references cref(a,b)
+);
+
+insert into aref values(3, 2019-02-18);
+insert into aref values(4, 2019-02-19);
+insert into aref values(5, 2019-02-20);
+
+insert into bref values(6, 'hello1');
+insert into bref values(7, 'hello2');
+insert into bref values(8, 'hello3');
+
+insert into cref values(2019-03-18, 'bye1');
+insert into cref values(2019-03-19, 'bye2');
+insert into cref values(2019-03-20, 'bye3');
+
+insert into hub values(3, 6, 2019-02-18, 2019-03-19, 'bye2', 'hello1');
+insert into hub values(5, 7, 2019-02-20, 2019-03-20, 'bye3', 'hello2');
+//good
+insert into hub values(5, 7, 2019-02-19, 2019-03-20, 'byebye', 'hello1');
+insert into hub values(5, 7, 2019-05-19, 2019-03-20, 'bye1', 'hello1');
+insert into hub values(9, 6, 2019-02-18, 2019-03-19, 'bye2', 'hello3');
+insert into hub values(9, 8, 2019-02-18, 2019-07-19, 'bye2', 'hello3');
+insert into hub values(9, 1341, 2019-06-18, 2019-07-19, 'byebye', 'hello717');
+//bad
+
+
+
+\"%
+

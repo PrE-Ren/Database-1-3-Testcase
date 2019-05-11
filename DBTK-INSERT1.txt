@@ -1,0 +1,114 @@
+insert primarykey, foreignkey testcase
+
+create table trashdb(
+a int,
+b int,
+primary key(a,b)
+);
+
+create table trashdc(
+c int,
+d int,
+primary key(c,d)
+);
+
+create table trashdd(
+e char(9),
+f char(11),
+primary key(e,f)
+);
+
+create table trashde(
+g date,
+h date, 
+primary key(g,h)
+); 
+
+create table baddb(
+a int,
+b int, 
+primary key(a),
+foreign key(b,a) references trashdb(a,b)
+); 
+
+create table saddb(
+c int,
+d int, 
+primary key(d),
+foreign key(c,d) references trashdc(c,d)
+); 
+
+create table crazydb(
+e char(11),
+f char(9), 
+primary key(e),
+foreign key(e,f) references trashdd(f,e)
+); 
+
+create table dizzydb(
+g date,
+h date, 
+primary key(g,h),
+foreign key(g,h) references trashde(g,h)
+); 
+
+insert into trashdb values (3,8);
+insert into trashdb values (3,11);
+insert into trashdb values (4,3);
+insert into trashdb values (9,6);
+
+insert into trashdc values (1,10);
+insert into trashdc values (6,7);
+insert into trashdc values (8,3);
+insert into trashdc values (5,5);
+insert into trashdc values (7,9);
+insert into trashdc values (10,1);
+insert into trashdc values (1,10);
+//error: primary key duplicated
+
+insert into trashdd values ('hello3','bye1');
+insert into trashdd values ('hello2','bye3');
+insert into trashdd values ('hello2','bye2');
+insert into trashdd values ('hello1','bye4');
+insert into trashdd values ('hello4','bye4');
+insert into trashdd values ('hello1','bye4');
+//error: primary key duplicated
+
+insert into trashde values (2019-03-07,2019-04-07);
+insert into trashde values (2019-03-19,2019-04-07);
+insert into trashde values (2019-04-07,2019-04-31);
+insert into trashde values (2019-03-07,2019-04-07);
+//error: primary key duplicated
+
+insert into baddb values (8,3);
+insert into baddb values (11,3);
+insert into baddb values (3,4);
+insert into baddb values (6,9);
+insert into baddb values (7,7);
+//error : foreign key not exist
+
+insert into saddb values (3,8);
+//error : foreign key not exist
+insert into saddb values (1,10);
+insert into saddb values (6,7);
+insert into saddb values (5,7);
+//error: primary key duplicated
+insert into saddb values (7,10);
+//error: primary key duplicated
+
+insert into crazydb values ('hello1','bye1');
+//error : foreign key not exist
+insert into crazydb values ('bye1','hello1');
+//error : foreign key not exist
+insert into crazydb values ('bye3','hello1');
+//error : foreign key not exist
+insert into crazydb values ('bye4','hello2');
+//error : foreign key not exist
+insert into crazydb values ('bye2','hello2');
+
+insert into dizzydb values (2019-03-07,2019-04-07);
+insert into dizzydb values (2019-03-19,2019-04-07);
+insert into dizzydb values (2019-04-31,2019-04-07);
+//error : foreign key not exist
+
+
