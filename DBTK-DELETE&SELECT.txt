@@ -1,0 +1,114 @@
+SNU Database Testcase by Prine
+//prerequisites
+create table trashdb(
+a int,
+b int, 
+c char(9),
+primary key(a,b)
+); 
+
+create table baddb(
+d int,
+e int, 
+primary key(d),
+foreign key(e,d) references trashdb(a,b)
+); 
+
+insert into trashdb values (3,15,'hello');
+insert into trashdb values (4,16,'hello2');
+insert into trashdb values (5,17,'hello3');
+insert into trashdb values (6,18,'hello4');
+insert into trashdb values (7,7,'hello5');
+insert into trashdb values (8,19,'hello6');
+insert into trashdb values (9,19,'hello7');
+insert into trashdb values (10,20,'hello8');
+insert into trashdb values (11,2,'hello9');
+insert into trashdb values (12,3,'hello10');
+insert into trashdb values (13,5,'hello10');
+insert into trashdb values (14,5,'hello10');
+insert into trashdb values (15,100,'hello11');
+insert into trashdb values (16,100,'hello13');
+insert into trashdb values (17,105,'hello14');
+insert into trashdb values (18,107,'bye5');
+insert into trashdb values (19,107,'bye5');
+insert into trashdb values (20,104,'bye2');
+insert into trashdb values (22, null, 'nullman');
+//error : 'b' is not nullable
+
+insert into baddb values (7,7);
+insert into baddb values (105,17);
+insert into baddb values (19,8);
+insert into baddb values (19,9);
+//error : primary key duplication
+insert into baddb values (20,10);
+insert into baddb values (2,11);
+insert into baddb values (3,12);
+insert into baddb values (5,14);
+
+//testcase - delete
+
+//type insert sequence of trashdb every time you type below.
+delete from trashdb where a=3; 
+//1 deleted, 0 not deleted due to ref 
+delete from trashdb where a<=8; 
+//4 deleted, 2 not deleted due to ref 
+delete from trashdb where a<=8 and a>5; 
+//1 deleted, 2 not deleted due to ref 
+delete from trashdb where a<5 or a>11;
+//8 deleted, 3 not deleted due to ref 
+delete from trashdb where a<5 or a>11 and a<=14;
+//3 deleted, 2 not deleted due to ref 
+delete from trashdb where a = b;
+//0 deleted, 1 not deleted due to ref 
+delete from trashdb where c >= 'hello6';
+//1 deleted, 3 not deleted due to ref 
+delete from trashdb where trashdb.a > b;
+//1 deleted, 3 not deleted due to ref 
+delete from trashdb where trashdb.a > b or 3=3 and trashdb.b = 5;
+//1 deleted, 3 not deleted due to ref 
+delete from trashdb where trashdb.b is null;
+//0 deleted, 0 not deleted due to ref
+delete from trashdb where trashdb.b is not null;
+//11 deleted, 7 not deleted due to ref 
+delete from trashdb where trashdb.a > b or 3=3 and (trashdb.b = 5);
+//1 deleted, 3 not deleted due to ref 
+delete from trashdb where trashdb.a > b or 3=3 and (trashdb.b = 5 and (c = 'hello10') or a = 20);
+//2 deleted, 3 not deleted due to ref 
+delete from trashdb where (trashdb.a > b) or 3=3 and (trashdb.b = 5);
+//1 deleted, 3 not deleted due to ref 
+delete from trashdb where ((trashdb.b is not null) and (trashdb.a >= b or (trashdb.a = 5)) or c = 'hello14');
+//2 deleted, 5 not deleted due to ref 
+delete from trashdb;
+//11 deleted, 7 not deleted due to ref 
+
+select * from trashdb, baddb where a > d;
+select * from trashdb as T, baddb as S where a > d;
+select T.a as hakbun, b from trashdb as T, baddb as S where S.e=9 and T.a<=4;
+select * from trashdb as T, baddb as S where S.e=9 and T.a<=4;
+select * from trashdb as T, baddb as B where T.c > B.e;
+
+//hard testcase - delete
+delete from trashdb where ((trashdb.b is not null) and (trashdb.a >= b or (trashdb.a = 5)) or c = 'hello14' or (4<3 and a=c) or 3=3 or (a>c));
+//11 deleted, 7 not deleted due to ref 
+delete from trashdb where a>10 or (a<=10 or a=c);
+//11 deleted, 7 not deleted due to ref 
+delete from trashdb where a>10 and (a<=10 and a=c);
+//0 deleted, 0 not deleted due to ref  
+
+//blank table testcase - delete, select
+create table saddb(
+d int,
+e int, 
+primary key(d),
+foreign key(e,d) references trashdb(a,b)
+); 
+
+select * from saddb as S, saddb as T;
+
+delete from saddb where d>5;
+//0 deleted, 0 not deleted due to ref  
+
+//all testcase must be done without error 
+//select answers are too big to type, just check yourself with values printed
+
+ 
