@@ -86,6 +86,7 @@ select * from trashdb as T, baddb as S where a > d;
 select T.a as hakbun, b from trashdb as T, baddb as S where S.e=9 and T.a<=4;
 select * from trashdb as T, baddb as S where S.e=9 and T.a<=4;
 select * from trashdb as T, baddb as B where T.c > B.e;
+//error : incomparable value
 
 //hard testcase - delete
 delete from trashdb where ((trashdb.b is not null) and (trashdb.a >= b or (trashdb.a = 5)) or c = 'hello14' or (4<3 and a=c) or 3=3 or (a>c));
@@ -108,7 +109,7 @@ select * from saddb as S, saddb as T;
 delete from saddb where d>5;
 //0 deleted, 0 not deleted due to ref  
 
-//all testcase must be done without error 
+//all testcase must be done without error if it is not commented with 'error:'
 //select answers are too big to type, just check yourself with values printed
 
  
